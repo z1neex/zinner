@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1d2937">
+  <title>Zinner — твой мир</title>
+  <style>
+    :root{--bg:#171426;--panel:#252039;--panel2:#302849;--blue:#a78bfa;--text:#f5f1ff;--muted:#aaa2c2;--line:#493d63;--green:#69d3a2}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    button,input{font:inherit} button{cursor:pointer;border:0}
+    .app{max-width:980px;margin:auto;min-height:100vh;padding:22px 18px 100px}
+    header{display:flex;align-items:center;justify-content:space-between;margin:8px 0 22px}
+    .brand{font-size:30px;font-weight:900;letter-spacing:-1px;background:linear-gradient(100deg,#e9b5ff,#a78bfa,#f0abfc,#8b5cf6);background-size:200% auto;color:transparent;background-clip:text;-webkit-background-clip:text;animation:shine 5s linear infinite}@keyframes shine{to{background-position:200% center}}.brand span{color:inherit}.ownerName{font-weight:900;background:linear-gradient(90deg,#e9b5ff,#a78bfa,#f0abfc,#8b5cf6);background-size:200% auto;color:transparent;background-clip:text;-webkit-background-clip:text;animation:shine 5s linear infinite}.balance-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.event,.listing{padding:10px;border-bottom:1px solid var(--line)}
+    .pill{background:#302849;color:#d9c5ff;border:1px solid #574477;border-radius:99px;padding:7px 12px;font-size:13px}
+    .search{width:100%;background:#2c3948;color:var(--text);border:1px solid transparent;border-radius:18px;padding:16px 18px;outline:none;margin-bottom:18px}
+    .search:focus{border-color:var(--blue)}
+    .tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;background:#243444;border-radius:20px;padding:7px;position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:min(94%,650px);z-index:5;box-shadow:0 8px 30px #0005}
+    .tab{background:transparent;color:var(--muted);padding:11px 4px;border-radius:15px;font-size:13px;font-weight:650}
+    .tab.active{background:#304a62;color:var(--blue)}
+    .tab .ico{display:block;font-size:21px;margin-bottom:3px}
+    .page{display:none}.page.active{display:block}
+    h1{font-size:25px;margin:14px 0 5px} .sub{color:var(--muted);margin:0 0 18px}
+    .chat{display:flex;gap:13px;align-items:center;padding:14px 4px;border-bottom:1px solid var(--line)}
+    .avatar{width:52px;height:52px;flex:none;border-radius:50%;display:grid;place-items:center;background:linear-gradient(140deg,#65baff,#2877c4);font-weight:800;font-size:21px}
+    .chatmain{min-width:0;flex:1}.chatname{font-weight:750}.preview{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px;margin-top:3px}
+    .time{color:var(--blue);font-size:12px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+    .art{width:100%;height:210px;object-fit:cover;display:block;background:#101923}
+    .cardbody{padding:14px}.cardtitle{font-weight:800;font-size:17px}.muted{color:var(--muted);font-size:13px}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+    .buy{background:var(--blue);color:#092033;font-weight:800;padding:10px 14px;border-radius:12px}
+    .buy:disabled{background:#536575;color:#c2cbd3;cursor:not-allowed}
+    .balance{background:linear-gradient(120deg,#1c5a86,#263d59);border:1px solid #39739b;border-radius:20px;padding:18px;margin:16px 0}
+    .balance strong{font-size:30px;display:block;margin-top:5px}
+    .notice{background:#24394b;border:1px solid #36536b;border-radius:14px;padding:12px;color:#c8d7e5;font-size:13px;margin:16px 0}
+    .profile{display:flex;align-items:center;gap:14px;background:var(--panel);padding:18px;border-radius:18px}
+    .profile .avatar{width:64px;height:64px}
+    .settings{margin-top:14px;background:var(--panel);border-radius:16px;padding:5px 15px}
+    .setting{padding:13px 0;border-bottom:1px solid var(--line)}.setting:last-child{border:0}
+    .smallbtn{background:#34495d;color:var(--text);padding:8px 11px;border-radius:10px}
+    footer{color:#71869a;font-size:12px;text-align:center;margin:28px 0 0}
+
+    .game-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0}
+    .game-choice{background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:14px;padding:13px;font-weight:750}
+    .game-choice.active{border-color:var(--blue);background:#29465e;color:var(--blue)}
+    .game-panel{display:none;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:12px}
+    .game-panel.active{display:block}
+    .game-stage{position:relative;overflow:hidden;background:linear-gradient(#193b56,#24445a);border-radius:14px;height:230px;margin:14px 0;padding:12px}
+    .game-hud{display:flex;justify-content:space-between;gap:8px;color:#d8eafa;font-size:13px}
+    .tower{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);width:150px;display:flex;flex-direction:column-reverse;align-items:center;gap:2px}
+    .floor{height:11px;background:linear-gradient(90deg,#f0b35e,#ffe0a0);border:1px solid #a96d2e;border-radius:3px;width:100%}
+    .moving-floor{position:absolute;top:60px;left:20px;width:150px;height:11px;background:#ffcf70;border:1px solid #a96d2e;border-radius:3px}
+    .crane-line{position:absolute;top:0;left:50%;height:46px;border-left:3px solid #e6b44f}
+    .game-action{width:100%;background:var(--blue);color:#092033;font-weight:850;padding:13px;border-radius:12px;margin-top:8px}
+    .game-action:disabled{opacity:.45}
+    #runnerCanvas{display:block;width:100%;height:auto;background:linear-gradient(#8bd8ff 0 68%,#4f9b59 68%);border-radius:12px;margin:14px 0;touch-action:manipulation}
+    .game-result{color:var(--green);font-weight:800;min-height:24px;margin-top:8px}
+
+    /* Zinner v4 visual refresh */
+    input,select,textarea{width:100%;min-width:0;background:#171426;color:var(--text);border:1px solid #55476f;border-radius:12px;padding:12px 14px;outline:none;margin:8px 0;box-shadow:inset 0 1px 3px #0003}
+    input::placeholder{color:#958ba9} input:focus,select:focus{border-color:#b69aff;box-shadow:0 0 0 3px #a78bfa25}
+    button{transition:transform .16s ease,filter .16s ease,background .16s ease}button:hover{filter:brightness(1.08)}button:active{transform:scale(.98)}
+    .card{box-shadow:0 10px 30px #09071430}
+    .market-card{padding:18px;margin:14px 0;background:linear-gradient(145deg,#28213e,#211b35)}
+    .market-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .market-price{font-size:30px;font-weight:900;letter-spacing:-.8px;margin-top:4px}
+    .market-price small{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:0}
+    .market-live{font-size:11px;color:#75e0b0;background:#173c35;border:1px solid #286451;border-radius:99px;padding:7px 10px;white-space:nowrap}
+    .chart-wrap{height:190px;margin-top:14px;border-radius:14px;overflow:hidden;background:linear-gradient(180deg,#211b36,#1b172b)}
+    #marketChart{width:100%;height:100%;display:block}
+    .chart-foot{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-top:9px}
+    .trade-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+    .trade-card{padding:18px;background:linear-gradient(145deg,#2c2544,#242039)}
+    .trade-kicker{font-size:10px;letter-spacing:1.4px;color:#bfa7ff;font-weight:900;margin-bottom:7px}
+    .sell-kicker{color:#80d9bd}.trade-card label{display:block;color:var(--muted);font-size:12px;margin-top:12px}
+    .estimate{font-size:12px;color:var(--muted);padding:10px 0 13px}.estimate b{color:#f3eaff}
+    .trade-btn{width:100%;padding:13px;border-radius:13px}
+    .market-info{margin-top:14px}
+    .profile-avatar{overflow:hidden;position:relative}.profile-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
+    .profile-edit label{display:block;color:var(--muted);font-size:13px;margin-top:12px}
+    .profile-edit input[type=file]{padding:10px;background:#211a33;color:var(--text)}
+    .profile-details{min-width:0}
+    .grant-grid{display:grid;grid-template-columns:1fr auto;gap:8px 10px;align-items:end;margin:12px 0}
+    .grant-grid label{font-size:12px;color:var(--muted);min-width:0}
+    .grant-grid input{display:block;width:100%;margin:6px 0 0}
+    .grant-btn{white-space:nowrap;min-height:42px}
+    #adminPanel button{cursor:pointer}
+    @media(max-width:520px){.grant-grid{grid-template-columns:1fr}.grant-btn{width:100%}}
+    .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:99;background:#302849;border:1px solid #8266b8;color:#fff;padding:13px 18px;border-radius:14px;box-shadow:0 12px 35px #0008;max-width:min(92vw,460px);font-weight:650}
+    .game-stage{max-width:520px;width:100%;margin:14px auto}
+    .moving-floor{width:112px}
+    .tower{width:112px}
+    @media(max-width:620px){.trade-grid{grid-template-columns:1fr}.market-price{font-size:25px}.chart-wrap{height:160px}}
+\n    @media(max-width:420px){.tab{font-size:11px;padding:9px 1px}.tab .ico{font-size:18px}}
+    @media(min-width:700px){.tabs{position:static;transform:none;width:100%;margin:20px 0 25px}.tab{font-size:15px}.tab .ico{display:inline;margin:0 7px 0 0}.app{padding-bottom:25px}}
+  </style>
+</head>
+<body>
+<div id="authModal" style="position:fixed;inset:0;background:#100d1cf2;z-index:20;display:grid;place-items:center;padding:18px"><div class="card cardbody" style="width:min(100%,420px);padding:22px"><div class="brand">Zinner</div><h2 id="authTitle">Регистрация</h2><div id="regFields"><input id="regName" placeholder="Имя пользователя" maxlength="20"><input id="regPass" type="password" placeholder="Пароль (от 6 символов)"></div><div id="loginFields" style="display:none"><input id="loginName" placeholder="Имя пользователя"><input id="loginPass" type="password" placeholder="Пароль"></div><button class="buy" style="width:100%" id="authSubmit">Зарегистрироваться</button><button class="smallbtn" style="width:100%;margin-top:8px" id="authSwitch">У меня уже есть аккаунт</button><p class="muted">Аккаунты пока сохраняются в этом браузере. Для общей регистрации и защищённых балансов позже подключим сервер.</p></div></div>
+<div class="app">
+  <header><div class="brand">Zinner</div><div class="pill" id="rankPill">Пользователь</div></header>
+
+  <nav class="tabs" aria-label="Главная навигация">
+    <button class="tab active" data-page="chats"><span class="ico">💬</span>Чаты</button>
+    <button class="tab" data-page="nft"><span class="ico">💎</span>NFT</button>
+    <button class="tab" data-page="exchange"><span class="ico">📊</span>Биржа</button>
+    <button class="tab" data-page="games"><span class="ico">🎮</span>Игры</button>
+    <button class="tab" data-page="profile"><span class="ico">👤</span>Профиль</button>
+  </nav>
+
+  <main>
+    <section class="page active" id="chats">
+      <h1>Чаты</h1><p class="sub">Твои разговоры в одном месте</p>
+      <input class="search" id="chatSearch" placeholder="⌕  Поиск чатов" aria-label="Поиск чатов">
+      <div id="chatList">
+        <div class="chat" data-search="команда zinner"><div class="avatar">Z</div><div class="chatmain"><div class="chatname">Команда Zinner</div><div class="preview">Добро пожаловать в наш мессенджер!</div></div><div class="time">сейчас</div></div>
+        <div class="chat" data-search="общий чат"><div class="avatar">👥</div><div class="chatmain"><div class="chatname">Общий чат</div><div class="preview">Здесь скоро появятся сообщения</div></div><div class="time">12:40</div></div>
+        <div class="chat" data-search="избранное"><div class="avatar">⭐</div><div class="chatmain"><div class="chatname">Избранное</div><div class="preview">Личные заметки</div></div></div>
+      </div>
+
+    </section>
+
+    <section class="page" id="nft">
+      <h1>Zinner NFT</h1><p class="sub">Genesis Collection · ограниченный выпуск</p>
+      <div class="grid">
+        <article class="card"><img class="art" src="assets/excalibur.png" alt="Легендарный меч Excalibur"><div class="cardbody"><div class="cardtitle">⚔️ Excalibur</div><div class="muted">5 копий · EXC-001—005</div><div class="row"><b>2 ZNX</b><button class="buy" data-buy="EXC">Купить</button></div></div></article>
+        <article class="card"><img class="art" src="assets/papyrus.png" alt="Древний папирус Zinner"><div class="cardbody"><div class="cardtitle">📜 Папирус Zinner</div><div class="muted">2 копии · PAP-001—002</div><div class="row"><b>2 ZNX</b><button class="buy" data-buy="PAP">Купить</button></div><div class="muted" style="margin-top:8px">PAP-001 получает первый владелец.</div></div></article>
+        <article class="card"><img class="art" src="assets/banana-cat.png" alt="Мемный кот в костюме банана"><div class="cardbody"><div class="cardtitle">🍌 Banana Cat</div><div class="muted">5 копий · CAT-001—005</div><div class="row"><b>2 ZNX</b><button class="buy" data-buy="CAT">Купить</button></div></div></article>
+      </div>
+
+    </section>
+
+    <section class="page" id="exchange">
+      <h1>Биржа ZIN / ZNX</h1><p class="sub">Покупай и продавай Зинекс по текущему рыночному курсу</p>
+      <div class="balance-grid">
+        <div class="balance"><div class="muted">Баланс ZIN · Зины</div><strong id="zinBalance">100</strong></div>
+        <div class="balance"><div class="muted">Баланс ZNX · Зинекс</div><strong id="znxBalance">0</strong></div>
+      </div>
+      <div class="card market-card">
+        <div class="market-head"><div><div class="muted">Текущий курс</div><div class="market-price"><span id="rateLabel">100</span> <small>ZIN за 1 ZNX</small></div></div><span class="market-live">● РЫНОК</span></div>
+        <div class="chart-wrap"><canvas id="marketChart" width="900" height="250" aria-label="График изменения курса ZNX"></canvas></div>
+        <div class="chart-foot"><span>Движение цены</span><span id="marketChange">Рынок активен</span></div>
+      </div>
+      <div class="trade-grid">
+        <div class="card cardbody trade-card"><div class="trade-kicker">ПОКУПКА</div><b>Купить ZNX</b><p class="muted">Укажи, сколько ZIN потратить</p><label for="buyQty">Сумма в ZIN</label><input id="buyQty" type="number" min="0.01" step="0.01" value="50"><div class="estimate">Получишь примерно <b id="buyEstimate">0.50 ZNX</b></div><button class="buy trade-btn" id="buyZnx">Купить ZNX</button></div>
+        <div class="card cardbody trade-card"><div class="trade-kicker sell-kicker">ПРОДАЖА</div><b>Продать ZNX</b><p class="muted">Укажи, сколько ZNX продать</p><label for="sellQty">Количество ZNX</label><input id="sellQty" type="number" min="0.01" step="0.01" value="0.50"><div class="estimate">Получишь примерно <b id="sellEstimate">50 ZIN</b></div><button class="buy trade-btn" id="sellZnx">Продать ZNX</button></div>
+      </div>
+      <div class="card cardbody market-info"><b>Как работает биржа</b><p class="muted">Покупки увеличивают спрос и могут поднимать курс. Продажи увеличивают предложение и могут снижать курс. Рыночные боты периодически совершают виртуальные сделки и добавляют движение на график.</p></div>
+      <div class="card cardbody" style="margin-top:14px"><b>История сделок</b><div id="tradeHistory" class="muted">Пока сделок нет.</div></div>
+    </section>
+
+    <section class="page" id="games">
+      <h1>Мини-игры</h1><p class="sub">Играй ради рекордов и собирай очки. Валюта не ставится и не теряется.</p>
+      <div class="game-tabs">
+        <button class="game-choice active" data-game="build">🏗️ Построй дом</button>
+        <button class="game-choice" data-game="escape">🏃 Побег</button>
+      </div>
+      <div class="game-panel active" id="build">
+        <div class="game-hud"><b>Этажи: <span id="floorCount">0</span>/15</b><b>Множитель очков: x<span id="buildMultiplier">0.5</span></b></div>
+        <div class="game-stage" id="buildStage">
+          <div class="crane-line"></div><div class="moving-floor" id="movingFloor"></div>
+          <div class="tower" id="tower"></div>
+        </div>
+        <button class="game-action" id="dropFloor">Поставить этаж</button>
+        <button class="smallbtn" id="restartBuild" style="margin-top:8px">Начать заново</button>
+        <div class="game-result" id="buildResult">Поставь первый этаж!</div>
+        <p class="muted">Нужно поставить 15 этажей. Чем точнее совпадение, тем лучше результат. Максимальный множитель очков — x2.</p>
+      </div>
+      <div class="game-panel" id="escape">
+        <div class="game-hud"><b>Монеты: <span id="coinCount">0</span>/15</b><b>Рекорд: <span id="escapeRecord">0</span></b></div>
+        <canvas id="runnerCanvas" width="640" height="300" aria-label="Игра Побег"></canvas>
+        <button class="game-action" id="jumpButton">Прыгнуть</button>
+        <button class="smallbtn" id="restartEscape" style="margin-top:8px">Начать заново</button>
+        <div class="game-result" id="escapeResult">Нажми «Начать заново», чтобы стартовать.</div>
+        <p class="muted">Собери все 15 монет, перепрыгивая препятствия. Нажми на экран игры или кнопку, чтобы прыгнуть.</p>
+      </div>
+    </section>
+
+    <section class="page" id="profile"><h1>Профиль</h1><p class="sub">Твои данные и имущество</p>
+      <div class="profile"><div class="avatar profile-avatar" id="avatar">Z</div><div class="profile-details"><div class="cardtitle" id="profileName">Пользователь</div><div class="muted" id="profileHandle">@user</div><span class="pill" id="profileRank">Пользователь</span></div></div>
+      <div class="card cardbody profile-edit" style="margin-top:14px"><b>Настройки профиля</b><label for="newProfileName">Имя пользователя</label><input id="newProfileName" maxlength="20" placeholder="Новое имя"><label for="avatarFile">Фотография профиля</label><input id="avatarFile" type="file" accept="image/*"><p class="muted">Выбери фотографию с телефона или компьютера. Она сохранится в этом браузере.</p><button class="buy" id="saveProfile" type="button">Сохранить изменения</button></div>
+      <div class="settings"><div class="setting">🪙 ZIN <b style="float:right" id="profileZin">100</b></div><div class="setting">💎 ZNX <b style="float:right" id="profileZnx">0</b></div><div class="setting">Мои NFT <div id="myNfts" class="muted">Пока нет NFT</div></div></div>
+      <div class="card cardbody" style="margin-top:14px"><b>Продать свой NFT</b><select id="sellNftSelect"></select><input id="sellNftPrice" type="number" min="0.01" step="0.01" value="3"><button class="buy" id="listNft">Выставить на продажу</button></div>
+      <div class="card cardbody" id="adminPanel" style="margin-top:14px;display:none"><b>👑 Панель владельца</b><p class="muted">Управление рангами, валютой и NFT</p><select id="adminUser"></select><select id="adminRank"><option>Пользователь</option><option>Модератор</option><option>Владелец</option></select><button class="smallbtn" id="setRank">Изменить ранг</button><div class="grant-grid"><label>Сколько ZIN выдать<input id="grantZin" type="number" min="0" step="0.01" value="100"></label><button class="smallbtn grant-btn" id="grantZinBtn" type="button">Выдать ZIN</button><label>Сколько ZNX выдать<input id="grantZnx" type="number" min="0" step="0.01" value="1"></label><button class="smallbtn grant-btn" id="grantZnxBtn" type="button">Выдать ZNX</button></div><button class="smallbtn" id="grantCurrency" type="button">Выдать обе валюты</button><select id="grantNft"><option>PAP-001</option><option>PAP-002</option><option>EXC-001</option><option>CAT-001</option></select><button class="smallbtn" id="grantNftBtn">Выдать NFT</button></div>
+    </section>
+  </main>
+  <footer>Zinner · твой мир, твои правила</footer>
+</div>
+<script>
+const KEY='zinner_v3_local';let db=JSON.parse(localStorage.getItem(KEY)||'null')||{users:[],events:[],orders:[],trades:[],listings:[],rate:100};
+db.users=Array.isArray(db.users)?db.users:[];db.events=Array.isArray(db.events)?db.events:[];db.orders=Array.isArray(db.orders)?db.orders:[];db.trades=Array.isArray(db.trades)?db.trades:[];db.listings=Array.isArray(db.listings)?db.listings:[];db.rate=Number(db.rate)||100;
+db.users.forEach(u=>{u.zin=Number(u.zin)||0;u.znx=Number(u.znx)||0;u.nfts=Array.isArray(u.nfts)?u.nfts:[];});
+let uid=sessionStorage.getItem('zinner_uid');
+let priceHistory=JSON.parse(localStorage.getItem('zinner_market_history')||'null')||Array.from({length:36},()=>100);
+function toast(message){let old=document.querySelector('.toast');if(old)old.remove();let el=document.createElement('div');el.className='toast';el.textContent=message;document.body.appendChild(el);setTimeout(()=>el.remove(),2600)}
+window.alert=toast;
+const $=id=>document.getElementById(id),me=()=>db.users.find(u=>u.id===uid),save=()=>localStorage.setItem(KEY,JSON.stringify(db)),fmt=n=>Number(n||0).toLocaleString('ru-RU',{maximumFractionDigits:2});
+function log(t,bot=false){db.events.unshift({t,bot,at:new Date().toLocaleTimeString('ru-RU')});db.events=db.events.slice(0,30);save();renderEvents()}
+function authMode(login){$('regFields').style.display=login?'none':'block';$('loginFields').style.display=login?'block':'none';$('authTitle').textContent=login?'Вход':'Регистрация';$('authSubmit').textContent=login?'Войти':'Зарегистрироваться';$('authSwitch').textContent=login?'Создать аккаунт':'У меня уже есть аккаунт'}
+$('authSwitch').onclick=()=>authMode($('loginFields').style.display==='none');
+$('authSubmit').onclick=()=>{if($('regFields').style.display!=='none'){let name=$('regName').value.trim(),pass=$('regPass').value;if(name.length<2||pass.length<6)return alert('Имя — от 2 символов, пароль — от 6.');let owner=db.users.length===0,u={id:Math.random().toString(36).slice(2),name,pass,rank:owner?'Владелец':'Пользователь',zin:100,znx:0,nfts:owner?['PAP-001']:[]};db.users.push(u);uid=u.id;sessionStorage.setItem('zinner_uid',uid);log(owner?name+' стал первым владельцем и получил PAP-001':name+' зарегистрировался');save();$('authModal').style.display='none';render()}else{let u=db.users.find(x=>x.name.toLowerCase()===$('loginName').value.trim().toLowerCase()&&x.pass===$('loginPass').value);if(!u)return alert('Неверное имя или пароль');uid=u.id;sessionStorage.setItem('zinner_uid',uid);$('authModal').style.display='none';render()}};
+$('saveProfile').onclick=()=>{let u=me();if(!u)return;let newName=$('newProfileName').value.trim();if(newName.length<2||newName.length>20){toast('Имя должно содержать от 2 до 20 символов');return}u.name=newName;let file=$('avatarFile').files&&$('avatarFile').files[0];let finish=()=>{save();render();toast('Профиль обновлён')};if(!file){finish();return}if(!file.type.startsWith('image/')){toast('Выбери файл изображения');return}let reader=new FileReader();reader.onload=()=>{let img=new Image();img.onload=()=>{let canvas=document.createElement('canvas'),max=512,scale=Math.min(1,max/Math.max(img.width,img.height));canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);u.avatar=canvas.toDataURL('image/jpeg',.78);$('avatarFile').value='';finish()};img.onerror=()=>toast('Не удалось открыть это изображение');img.src=reader.result};reader.onerror=()=>toast('Не удалось прочитать файл');reader.readAsDataURL(file)};
+function renderEvents(){$('events').innerHTML=db.events.filter(e=>!e.bot).slice(0,10).map(e=>`<div class="event"><span>${e.t}</span><small>${e.at}</small></div>`).join('')||'<p class="muted">Пока событий нет.</p>'}
+function render(){let u=me();if(!u){$('authModal').style.display='grid';return}$('authModal').style.display='none';$('rankPill').textContent=u.rank;$('profileRank').textContent=u.rank;$('profileName').textContent=u.name;$('profileHandle').textContent='@'+u.name.toLowerCase().replace(/\s/g,'_');$('newProfileName').value=u.name;
+if(u.avatar){$('avatar').innerHTML='';let img=document.createElement('img');img.src=u.avatar;img.alt='Аватар пользователя';$('avatar').appendChild(img)}else $('avatar').textContent=u.name[0].toUpperCase();if(u.rank==='Владелец')$('profileName').classList.add('ownerName');else $('profileName').classList.remove('ownerName');$('zinBalance').textContent=fmt(u.zin);$('znxBalance').textContent=fmt(u.znx);$('profileZin').textContent=fmt(u.zin)+' ZIN';$('profileZnx').textContent=fmt(u.znx)+' ZNX';$('myNfts').textContent=u.nfts.join(', ')||'Пока нет NFT';$('sellNftSelect').innerHTML=u.nfts.map(n=>`<option>${n}</option>`).join('');$('adminPanel').style.display=u.rank==='Владелец'?'block':'none';if(u.rank==='Владелец')$('adminUser').innerHTML=db.users.map(x=>`<option value="${x.id}">${x.name} (${x.rank})</option>`).join('');$('rateLabel').textContent=fmt(db.rate)+' ZIN';renderEvents();renderOrders();renderTrades();renderListings()}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===b.dataset.page))});
+function updateEstimates(){let r=Number(db.rate)||100,b=Number($('buyQty').value)||0,s=Number($('sellQty').value)||0;$('buyEstimate').textContent=fmt(b/r)+' ZNX';$('sellEstimate').textContent=fmt(s*r)+' ZIN'}
+function drawMarket(){let c=$('marketChart');if(!c)return;let ctx=c.getContext('2d'),w=c.width,h=c.height;ctx.clearRect(0,0,w,h);
+ctx.font='13px system-ui';ctx.lineWidth=1;
+for(let i=0;i<=4;i++){let y=12+i*(h-30)/4;ctx.strokeStyle='#66577f';ctx.setLineDash([7,7]);ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();ctx.setLineDash([])}
+let min=Math.min(...priceHistory)-3,max=Math.max(...priceHistory)+3,range=Math.max(1,max-min),pts=priceHistory.map((v,i)=>({x:i*w/(priceHistory.length-1),y:h-18-(v-min)/range*(h-36)}));
+/* Вертикальные столбики показывают каждое изменение курса */
+for(let i=1;i<pts.length;i++){let prev=pts[i-1],p=pts[i],up=priceHistory[i]>=priceHistory[i-1];ctx.strokeStyle=up?'#53d6a2':'#ff7b9a';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(p.x,prev.y);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.fillStyle=up?'#53d6a2':'#ff7b9a';ctx.fillRect(p.x-3,p.y-3,6,6)}
+ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();let grad=ctx.createLinearGradient(0,0,0,h);grad.addColorStop(0,'#a78bfa44');grad.addColorStop(1,'#a78bfa00');ctx.fillStyle=grad;ctx.fill();
+ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.strokeStyle='#d0baff';ctx.lineWidth=3;ctx.lineJoin='round';ctx.stroke();
+let p=pts[pts.length-1];ctx.beginPath();ctx.arc(p.x,p.y,7,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.beginPath();ctx.arc(p.x,p.y,4,0,Math.PI*2);ctx.fillStyle='#bda3ff';ctx.fill()}
+function setMarketRate(next,reason){let old=db.rate;db.rate=Math.max(20,Math.min(250,next));priceHistory.push(db.rate);if(priceHistory.length>48)priceHistory.shift();localStorage.setItem('zinner_market_history',JSON.stringify(priceHistory));$('rateLabel').textContent=fmt(db.rate);$('marketChange').textContent=(db.rate>=old?'▲ ':'▼ ')+fmt(Math.abs(db.rate-old))+' ZIN';updateEstimates();drawMarket();save()}
+function doTrade(side,amount){let u=me();amount=Number(amount);let price=Number(db.rate)||100;if(!(amount>0))return toast('Укажи сумму больше нуля');if(side==='buy'){let spend=amount,receive=spend/price;if(u.zin+1e-9<spend)return toast('Недостаточно ZIN для покупки');u.zin-=spend;u.znx+=receive;setMarketRate(price+Math.min(5,spend*.025),'buy');db.trades.unshift({name:u.name,side,qty:receive,price,amount:spend})}else{let qty=amount,receive=qty*price;if(u.znx+1e-9<qty)return toast('Недостаточно ZNX для продажи');u.znx-=qty;u.zin+=receive;setMarketRate(price-Math.min(5,qty*.8),'sell');db.trades.unshift({name:u.name,side,qty,price,amount:receive})}log(u.name+(side==='buy'?' купил ':' продал ')+fmt(side==='buy'?amount:amount)+' '+(side==='buy'?'ZIN на бирже':'ZNX на бирже'));save();render()}
+$('buyZnx').onclick=()=>doTrade('buy',$('buyQty').value);$('sellZnx').onclick=()=>doTrade('sell',$('sellQty').value);
+$('buyQty').addEventListener('input',updateEstimates);$('sellQty').addEventListener('input',updateEstimates);
+function renderOrders(){}
+function renderTrades(){$('tradeHistory').innerHTML=db.trades.slice(0,10).map(t=>`<div class="event">${t.name}: ${t.side==='buy'?'покупка':'продажа'} ${t.qty} ZNX · ${t.price} ZIN</div>`).join('')||'Пока сделок нет.'}
+const stock={EXC:['EXC-001','EXC-002','EXC-003','EXC-004','EXC-005'],PAP:['PAP-001','PAP-002'],CAT:['CAT-001','CAT-002','CAT-003','CAT-004','CAT-005']};document.querySelectorAll('[data-buy]').forEach(b=>b.onclick=()=>{let u=me(),kind=b.dataset.buy,n=stock[kind].find(n=>!db.users.some(x=>x.nfts.includes(n))&&!db.listings.some(x=>x.nft===n));if(!n)return alert('Тираж закончился');if(u.znx<2)return alert('Нужно 2 ZNX. Купи на бирже.');u.znx-=2;u.nfts.push(n);log(u.name+' купил NFT '+n);save();render()});
+$('listNft').onclick=()=>{let u=me(),n=$('sellNftSelect').value,p=Number($('sellNftPrice').value);if(!n||!(p>0)||!u.nfts.includes(n))return alert('Выбери NFT и цену');u.nfts=u.nfts.filter(x=>x!==n);db.listings.push({id:Math.random().toString(36).slice(2),nft:n,price:p,uid:u.id,name:u.name});log(u.name+' выставил '+n+' на продажу');save();render()};function renderListings(){$('nftListings').innerHTML=db.listings.map(l=>`<div class="listing">${l.nft} · ${l.price} ZNX · ${l.name} <button class="smallbtn" data-listing="${l.id}">Купить</button></div>`).join('')||'Пока предложений нет';document.querySelectorAll('[data-listing]').forEach(b=>b.onclick=()=>{let l=db.listings.find(x=>x.id===b.dataset.listing),u=me(),seller=db.users.find(x=>x.id===l.uid);if(!l||l.uid===u.id)return alert('Нельзя купить свой NFT');if(u.znx<l.price)return alert('Недостаточно ZNX');u.znx-=l.price;seller.znx+=l.price;u.nfts.push(l.nft);db.listings=db.listings.filter(x=>x.id!==l.id);log(u.name+' купил '+l.nft+' у '+seller.name);save();render()})}
+function adminTarget(){let owner=me();if(!owner||owner.rank!=='Владелец'){toast('Эта функция доступна только владельцу');return null}let target=db.users.find(x=>x.id===$('adminUser').value);if(!target){toast('Сначала выбери пользователя');return null}return target}
+function grantAmount(inputId,field){let t=adminTarget();if(!t)return;let raw=$(inputId).value,amount=Number(raw);if(raw.trim()===''||!Number.isFinite(amount)||amount<=0){toast('Введи сумму больше нуля');return}t[field]=(Number(t[field])||0)+amount;save();log('Владелец выдал '+fmt(amount)+' '+field.toUpperCase()+' пользователю '+t.name);render();toast('Выдано '+fmt(amount)+' '+field.toUpperCase()+' пользователю '+t.name)}
+$('setRank').onclick=()=>{let target=adminTarget();if(!target)return;target.rank=$('adminRank').value;save();log('Владелец изменил ранг '+target.name);render();toast('Роль пользователя обновлена')};
+$('grantZinBtn').onclick=()=>grantAmount('grantZin','zin');
+$('grantZnxBtn').onclick=()=>grantAmount('grantZnx','znx');
+$('grantCurrency').onclick=()=>{let t=adminTarget();if(!t)return;let a=Number($('grantZin').value),b=Number($('grantZnx').value);if(!Number.isFinite(a)||!Number.isFinite(b)||a<0||b<0||a+b<=0){toast('Укажи положительную сумму хотя бы одной валюты');return}t.zin=(Number(t.zin)||0)+a;t.znx=(Number(t.znx)||0)+b;save();log('Владелец выдал валюту пользователю '+t.name);render();toast('Валюты выданы пользователю '+t.name)};
+$('grantNftBtn').onclick=()=>{let t=adminTarget();if(!t)return;let n=$('grantNft').value;if(db.users.some(x=>x.nfts.includes(n))){toast('Этот NFT уже у кого-то есть');return}t.nfts.push(n);save();log('Владелец выдал '+n+' пользователю '+t.name);render();toast('NFT '+n+' выдан')};
+  // Переключение мини-игр
+  document.querySelectorAll('.game-choice').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll('.game-choice').forEach(b => b.classList.toggle('active', b===btn));
+    document.querySelectorAll('.game-panel').forEach(p => p.classList.toggle('active', p.id===btn.dataset.game));
+  }));
+
+  // Построй дом: этажи ставятся по нажатию, очки зависят от точности
+  const movingFloor = document.getElementById('movingFloor');
+  const buildStage = document.getElementById('buildStage');
+  const tower = document.getElementById('tower');
+  let floorX=20, floorDir=1, floorTimer=null, floors=0, buildingScore=0, moving=true, lastWidth=150;
+  function moveFloor(){
+    if(!moving) return;
+    floorX += floorDir*6.4;
+    const max = Math.max(0, buildStage.clientWidth-170);
+    if(floorX>=max || floorX<=0) floorDir*=-1;
+    floorX=Math.max(0,Math.min(max,floorX));
+    movingFloor.style.left=floorX+'px';
+    floorTimer=requestAnimationFrame(moveFloor);
+  }
+  function updateBuild(){
+    document.getElementById('floorCount').textContent=floors;
+    const mult=(0.5 + (floors/15)*1.5);
+    document.getElementById('buildMultiplier').textContent=mult.toFixed(2).replace(/0$/,'').replace(/\.$/,'');
+  }
+  function resetBuild(){
+    cancelAnimationFrame(floorTimer); floors=0; buildingScore=0; moving=true; floorX=20; floorDir=1;
+    tower.innerHTML=''; lastWidth=Math.min(112,buildStage.clientWidth-30);
+    movingFloor.style.width=lastWidth+'px'; movingFloor.style.left='20px'; movingFloor.style.top='60px';
+    movingFloor.style.display='block'; document.getElementById('dropFloor').disabled=false;
+    document.getElementById('buildResult').textContent='Поставь первый этаж!';
+    updateBuild(); moveFloor();
+  }
+  document.getElementById('dropFloor').addEventListener('click',()=>{
+    if(!moving) return;
+    const center=floorX+lastWidth/2, target=buildStage.clientWidth/2;
+    const error=Math.abs(center-target);
+    const tolerance=Math.max(18,lastWidth*0.32);
+    if(error>lastWidth/2+70){
+      moving=false; cancelAnimationFrame(floorTimer);
+      document.getElementById('dropFloor').disabled=true;
+      document.getElementById('buildResult').textContent='Этаж не попал! Итог: '+floors+' этажей.';
+      return;
+    }
+    floors++;
+    const quality=Math.max(0,1-error/(buildStage.clientWidth/2));
+    buildingScore += Math.round(quality*100);
+    const width=Math.max(35,lastWidth-Math.max(0,error-12)*0.55);
+    lastWidth=width;
+    const block=document.createElement('div'); block.className='floor'; block.style.width=width+'px'; tower.appendChild(block);
+    movingFloor.style.width=width+'px';
+    movingFloor.style.top=Math.max(45,60-floors*2)+'px';
+    updateBuild();
+    document.getElementById('buildResult').textContent='Отлично! Очки: '+buildingScore;
+    if(floors>=15){
+      moving=false; cancelAnimationFrame(floorTimer);
+      document.getElementById('dropFloor').disabled=true;
+      document.getElementById('buildResult').textContent='🏆 Дом построен! 15/15 этажей · x2 · '+buildingScore+' очков.';
+    }
+  });
+  document.getElementById('restartBuild').addEventListener('click',resetBuild);
+  window.addEventListener('resize',()=>{if(document.getElementById('games').classList.contains('active') && moving) resetBuild();});
+  resetBuild();
+
+  // Побег: собери 15 монет, избегая препятствий
+  const canvas=document.getElementById('runnerCanvas'), ctx=canvas.getContext('2d');
+  let runner={x:85,y:175,vy:0,onGround:true}, coins=0, obstacles=[], coinObjects=[], gameRunning=false, gameEnded=false, frame=0, record=0;
+  function setupEscape(){
+    coins=0; frame=0; gameRunning=true; gameEnded=false; runner={x:85,y:175,vy:0,onGround:true};
+    obstacles=[]; coinObjects=[];
+    for(let i=0;i<15;i++) coinObjects.push({x:250+i*205,y:190-(i%3)*32,taken:false});
+    for(let i=0;i<12;i++) obstacles.push({x:390+i*250,w:32,h:36});
+    document.getElementById('coinCount').textContent='0';
+    document.getElementById('escapeRecord').textContent=record;
+    document.getElementById('escapeResult').textContent='Беги и собери 15 монет!';
+    drawEscape(); requestAnimationFrame(escapeLoop);
+  }
+  function drawEscape(){
+    ctx.clearRect(0,0,640,300);
+    ctx.fillStyle='#8bd8ff';ctx.fillRect(0,0,640,205);
+    ctx.fillStyle='#4f9b59';ctx.fillRect(0,205,640,95);
+    ctx.fillStyle='#347342';ctx.fillRect(0,260,640,40);
+    coinObjects.forEach(c=>{if(!c.taken){ctx.beginPath();ctx.fillStyle='#ffd447';ctx.arc(c.x, c.y, 11,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#b77b16';ctx.lineWidth=3;ctx.stroke();}});
+    obstacles.forEach(o=>{ctx.fillStyle='#965b37';ctx.fillRect(o.x,205-o.h,o.w,o.h);ctx.fillStyle='#c78b5d';ctx.fillRect(o.x+5,205-o.h+5,o.w-10,7);});
+    ctx.fillStyle='#2366b2';ctx.fillRect(runner.x,runner.y,30,30);
+    ctx.beginPath();ctx.fillStyle='#2366b2';ctx.arc(runner.x+15,runner.y-8,13,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#fff';ctx.fillRect(runner.x+19,runner.y-12,4,4);
+    ctx.fillStyle='#17354a';ctx.font='bold 16px system-ui';ctx.fillText('Собрано: '+coins+'/15',18,28);
+  }
+  function escapeLoop(){
+    if(!gameRunning) return;
+    frame++;
+    runner.vy+=0.46;runner.y+=runner.vy;
+    if(runner.y>=175){runner.y=175;runner.vy=0;runner.onGround=true;}
+    const speed=1.9;
+    coinObjects.forEach(c=>{c.x-=speed;if(!c.taken && Math.abs(c.x-runner.x-15)<22 && Math.abs(c.y-(runner.y+10))<28){c.taken=true;coins++;document.getElementById('coinCount').textContent=coins;}});
+    obstacles.forEach(o=>{o.x-=speed;if(o.x<runner.x+27 && o.x+o.w>runner.x+3 && runner.y>205-o.h-28){gameRunning=false;gameEnded=true;document.getElementById('escapeResult').textContent='Раунд окончен. Собрано '+coins+' из 15 монет.';}});
+    if(coins>=15){gameRunning=false;gameEnded=true;record=Math.max(record,coins);document.getElementById('escapeRecord').textContent=record;document.getElementById('escapeResult').textContent='🏆 Победа! Все 15 монет собраны!';}
+    drawEscape();
+    if(gameRunning) requestAnimationFrame(escapeLoop);
+  }
+  function jump(){if(gameRunning && runner.onGround){runner.vy=-13.5;runner.onGround=false;}}
+  document.getElementById('jumpButton').addEventListener('click',jump);
+  canvas.addEventListener('pointerdown',jump);
+  document.getElementById('restartEscape').addEventListener('click',setupEscape);
+  setupEscape();
+
+
+if(me())render();else $('authModal').style.display='grid';
+$('rateLabel').textContent=fmt(db.rate)+'';
+updateEstimates();drawMarket();
+setInterval(()=>{let drift=(Math.random()-.5)*1.1;setMarketRate((Number(db.rate)||100)+drift,'bot');},4200);
+</script>
+</body></html>
