@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1d2937">
+  <title>Zinner — твой мир, твои сообщения</title>
+  <style>
+    :root{--bg:#1d2937;--panel:#263646;--panel2:#304356;--blue:#55b4f5;--text:#f3f7fb;--muted:#9aaabd;--line:#3b5064;--green:#69d3a2}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+    button,input{font:inherit} button{cursor:pointer;border:0}
+    .app{max-width:980px;margin:auto;min-height:100vh;padding:22px 18px 100px}
+    header{display:flex;align-items:center;justify-content:space-between;margin:8px 0 22px}
+    .brand{font-size:30px;font-weight:800;letter-spacing:-1px}.brand span{color:var(--blue)}
+    .pill{background:#20394d;color:var(--blue);border:1px solid #315a78;border-radius:99px;padding:7px 12px;font-size:13px}
+    .search{width:100%;background:#2c3948;color:var(--text);border:1px solid transparent;border-radius:18px;padding:16px 18px;outline:none;margin-bottom:18px}
+    .search:focus{border-color:var(--blue)}
+    .tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;background:#243444;border-radius:20px;padding:7px;position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:min(94%,650px);z-index:5;box-shadow:0 8px 30px #0005}
+    .tab{background:transparent;color:var(--muted);padding:11px 4px;border-radius:15px;font-size:13px;font-weight:650}
+    .tab.active{background:#304a62;color:var(--blue)}
+    .tab .ico{display:block;font-size:21px;margin-bottom:3px}
+    .page{display:none}.page.active{display:block}
+    h1{font-size:25px;margin:14px 0 5px} .sub{color:var(--muted);margin:0 0 18px}
+    .chat{display:flex;gap:13px;align-items:center;padding:14px 4px;border-bottom:1px solid var(--line)}
+    .avatar{width:52px;height:52px;flex:none;border-radius:50%;display:grid;place-items:center;background:linear-gradient(140deg,#65baff,#2877c4);font-weight:800;font-size:21px}
+    .chatmain{min-width:0;flex:1}.chatname{font-weight:750}.preview{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px;margin-top:3px}
+    .time{color:var(--blue);font-size:12px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+    .art{width:100%;height:210px;object-fit:cover;display:block;background:#101923}
+    .cardbody{padding:14px}.cardtitle{font-weight:800;font-size:17px}.muted{color:var(--muted);font-size:13px}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+    .buy{background:var(--blue);color:#092033;font-weight:800;padding:10px 14px;border-radius:12px}
+    .buy:disabled{background:#536575;color:#c2cbd3;cursor:not-allowed}
+    .balance{background:linear-gradient(120deg,#1c5a86,#263d59);border:1px solid #39739b;border-radius:20px;padding:18px;margin:16px 0}
+    .balance strong{font-size:30px;display:block;margin-top:5px}
+    .notice{background:#24394b;border:1px solid #36536b;border-radius:14px;padding:12px;color:#c8d7e5;font-size:13px;margin:16px 0}
+    .profile{display:flex;align-items:center;gap:14px;background:var(--panel);padding:18px;border-radius:18px}
+    .profile .avatar{width:64px;height:64px}
+    .settings{margin-top:14px;background:var(--panel);border-radius:16px;padding:5px 15px}
+    .setting{padding:13px 0;border-bottom:1px solid var(--line)}.setting:last-child{border:0}
+    .smallbtn{background:#34495d;color:var(--text);padding:8px 11px;border-radius:10px}
+    footer{color:#71869a;font-size:12px;text-align:center;margin:28px 0 0}
+    @media(min-width:700px){.tabs{position:static;transform:none;width:100%;margin:20px 0 25px}.tab{font-size:15px}.tab .ico{display:inline;margin:0 7px 0 0}.app{padding-bottom:25px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header><div class="brand">Z<span>inner</span></div><div class="pill">● DEMO</div></header>
+
+  <nav class="tabs" aria-label="Главная навигация">
+    <button class="tab active" data-page="chats"><span class="ico">💬</span>Чаты</button>
+    <button class="tab" data-page="nft"><span class="ico">💎</span>NFT</button>
+    <button class="tab" data-page="exchange"><span class="ico">📊</span>Биржа</button>
+    <button class="tab" data-page="profile"><span class="ico">👤</span>Профиль</button>
+  </nav>
+
+  <main>
+    <section class="page active" id="chats">
+      <h1>Чаты</h1><p class="sub">Твои разговоры в одном месте</p>
+      <input class="search" id="chatSearch" placeholder="⌕  Поиск чатов" aria-label="Поиск чатов">
+      <div id="chatList">
+        <div class="chat" data-search="архив чатов"><div class="avatar">▣</div><div class="chatmain"><div class="chatname">Архив чатов</div><div class="preview">Сохранённые переписки</div></div></div>
+        <div class="chat" data-search="команда zinner"><div class="avatar">Z</div><div class="chatmain"><div class="chatname">Команда Zinner</div><div class="preview">Добро пожаловать в наш мессенджер!</div></div><div class="time">сейчас</div></div>
+        <div class="chat" data-search="общий чат"><div class="avatar">👥</div><div class="chatmain"><div class="chatname">Общий чат</div><div class="preview">Здесь скоро появятся сообщения</div></div><div class="time">12:40</div></div>
+        <div class="chat" data-search="избранное"><div class="avatar">⭐</div><div class="chatmain"><div class="chatname">Избранное</div><div class="preview">Личные заметки</div></div></div>
+      </div>
+      <div class="notice">Это первая демонстрационная версия. Настоящие аккаунты и переписка появятся после подключения базы данных и сервера.</div>
+    </section>
+
+    <section class="page" id="nft">
+      <h1>Zinner NFT</h1><p class="sub">Genesis Collection · ограниченный выпуск</p>
+      <div class="grid">
+        <article class="card"><img class="art" src="assets/excalibur.png" alt="Легендарный меч Excalibur"><div class="cardbody"><div class="cardtitle">⚔️ Excalibur</div><div class="muted">5 копий · EXC-001—005</div><div class="row"><b>100 ZNX</b><button class="buy" data-buy="EXC">Купить</button></div></div></article>
+        <article class="card"><img class="art" src="assets/papyrus.png" alt="Древний папирус Zinner"><div class="cardbody"><div class="cardtitle">📜 Папирус Zinner</div><div class="muted">2 копии · PAP-001—002</div><div class="row"><b>100 ZNX</b><button class="buy" data-buy="PAP" disabled>Тираж ограничен</button></div><div class="muted" style="margin-top:8px">PAP-001 зарезервирован за создателем.</div></div></article>
+        <article class="card"><img class="art" src="assets/banana-cat.png" alt="Мемный кот в костюме банана"><div class="cardbody"><div class="cardtitle">🍌 Banana Cat</div><div class="muted">5 копий · CAT-001—005</div><div class="row"><b>100 ZNX</b><button class="buy" data-buy="CAT">Купить</button></div></div></article>
+      </div>
+      <div class="notice">Покупки здесь пока демонстрационные: NFT и платежи не записываются в блокчейн и не имеют денежной стоимости.</div>
+    </section>
+
+    <section class="page" id="exchange">
+      <h1>Биржа Zinex</h1><p class="sub">Внутренняя игровая валюта Zinner</p>
+      <div class="balance"><div class="muted">Твой демонстрационный баланс</div><strong><span id="balance">1 000</span> ZNX</strong><div class="muted">Zinex · тикер ZNX</div></div>
+      <div class="card"><div class="cardbody"><div class="cardtitle">Курс Zinex</div><p class="muted">Пока фиксированный внутренний курс. Рыночная цена не рассчитывается.</p><div class="row"><span>1 ZNX</span><b>100 очков коллекции</b></div></div></div>
+      <div class="notice">Zinex сейчас — виртуальные баллы внутри демо-сайта, не криптовалюта и не реальные деньги.</div>
+      <button class="smallbtn" id="reset">Сбросить демо-баланс</button>
+    </section>
+
+    <section class="page" id="profile">
+      <h1>Профиль</h1><p class="sub">Твои данные и настройки</p>
+      <div class="profile"><div class="avatar">Z</div><div><div class="cardtitle">Создатель Zinner</div><div class="muted">@zinner_owner</div></div></div>
+      <div class="settings">
+        <div class="setting">🪙 Баланс <b style="float:right" id="profileBalance">1 000 ZNX</b></div>
+        <div class="setting">💎 Мои NFT <b style="float:right">PAP-001</b></div>
+        <div class="setting">🌙 Тема <b style="float:right">Тёмная</b></div>
+        <div class="setting">⚙️ Настройки аккаунта <span class="muted" style="float:right">Скоро</span></div>
+      </div>
+    </section>
+  </main>
+  <footer>Zinner · ранняя демонстрационная версия</footer>
+</div>
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(btn => btn.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.toggle('active', t === btn));
+    document.querySelectorAll('.page').forEach(p => p.classList.toggle('active', p.id === btn.dataset.page));
+  }));
+  document.getElementById('chatSearch').addEventListener('input', e => {
+    const q = e.target.value.toLowerCase();
+    document.querySelectorAll('#chatList .chat').forEach(c => c.style.display = c.dataset.search.includes(q) ? 'flex' : 'none');
+  });
+  let balance = 1000;
+  function renderBalance(){
+    document.getElementById('balance').textContent = balance.toLocaleString('ru-RU');
+    document.getElementById('profileBalance').textContent = balance.toLocaleString('ru-RU') + ' ZNX';
+  }
+  document.querySelectorAll('[data-buy]').forEach(btn => btn.addEventListener('click', () => {
+    if(balance < 100){alert('Недостаточно ZNX');return;}
+    balance -= 100; renderBalance();
+    alert('Демо-покупка! Списано 100 ZNX. Это пока не настоящая транзакция.');
+  }));
+  document.getElementById('reset').addEventListener('click', () => {balance=1000;renderBalance();});
+</script>
+</body>
+</html>
