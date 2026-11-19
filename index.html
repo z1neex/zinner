@@ -1,0 +1,24 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07040f"><title>VORTEX — игровой портал</title>
+<link rel="stylesheet" href="style.css"></head>
+<body data-theme="violet">
+<div id="auth" class="overlay"><div class="panel">
+<h1 class="logo big">VORTEX</h1><p class="mut">Войди или создай аккаунт</p>
+<input id="nick" placeholder="Никнейм (a-z, 0-9, _)" maxlength="16" autocapitalize="off" autocomplete="username">
+<input id="pass" type="password" placeholder="Пароль (мин. 6 символов)" autocomplete="current-password">
+<div class="row"><button class="btn" id="login">Войти</button><button class="btn ghost" id="reg">Регистрация</button></div>
+<p id="aerr" class="err"></p><p class="mut small" id="mode"></p></div></div>
+<div id="app" hidden>
+<header><div class="logo">VORTEX</div><div class="bal">💠 <b id="bal">0</b> V</div></header>
+<nav id="nav">
+<button data-go="home">🏠<span>Главная</span></button><button data-go="games">🎮<span>Игры</span></button>
+<button data-go="rank">🏆<span>Рейтинг</span></button><button data-go="shop">🛒<span>Магазин</span></button>
+<button data-go="quests">📅<span>Задания</span></button><button data-go="profile">👤<span>Профиль</span></button>
+</nav><main id="view"></main></div>
+<div id="modal" class="overlay" hidden><div class="panel wide"><button class="x" id="mx">✕</button><div id="mb"></div></div></div>
+<div id="toast"></div>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="api.js"></script><script src="script.js"></script>
+</body></html>
