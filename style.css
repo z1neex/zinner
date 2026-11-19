@@ -27,7 +27,7 @@ h2{margin:6px 0 14px}h3{margin:18px 0 10px}
 .gcard{display:flex;flex-direction:column;gap:4px;text-align:left;color:var(--tx);background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;cursor:pointer;transition:.2s}
 .gcard:hover{transform:translateY(-4px);border-color:var(--p);box-shadow:0 8px 24px color-mix(in srgb,var(--p) 35%,transparent)}
 .gcard .gi{font-size:34px}.gcard small{color:var(--mut)}.gcard em{color:var(--n);font-style:normal;font-size:13px}
-.btn{background:linear-gradient(90deg,var(--p),color-mix(in srgb,var(--p) 60%,var(--n)));color:#fff;border:0;border-radius:12px;padding:11px 18px;font-weight:700;font-size:15px;cursor:pointer;transition:.2s}
+.btn{background:linear-gradient(90deg,var(--p),var(--n));color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4);border:0;border-radius:12px;padding:11px 18px;font-weight:700;font-size:15px;cursor:pointer;transition:.2s}
 .btn:hover{filter:brightness(1.15);box-shadow:0 0 16px var(--p)}.btn:active{transform:scale(.96)}
 .btn.ghost{background:none;border:1px solid var(--p);color:var(--tx)}.btn.sm{padding:6px 12px;font-size:13px}
 .btn.danger{background:#c81e4b}.btn:disabled{opacity:.5;cursor:default;box-shadow:none}

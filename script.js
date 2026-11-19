@@ -84,14 +84,40 @@ try{[D.games,D.quests,D.items]=await Promise.all([API.tbl('games'),API.tbl('ques
 function go(p){page=p;render();scrollTo(0,0)}
 $('#view').onclick=e=>{const b=e.target.closest('[data-act]');if(b&&!b.disabled)ACT[b.dataset.act](b.dataset.v)};
 $('#nav').onclick=e=>{const b=e.target.closest('[data-go]');if(b)go(b.dataset.go)};
-async function auth(reg){const n=$('#nick').value.trim().toLowerCase(),p=$('#pass').value,e=$('#aerr');e.textContent='';
-if(!/^[a-z0-9_]{3,16}$/.test(n))return e.textContent='Никнейм: 3–16 символов a-z, 0-9, _';
-if(p.length<6)return e.textContent='Пароль: минимум 6 символов';
-try{reg?await API.signUp(n,p):await API.signIn(n,p);await start()}catch(x){e.textContent=x.message}}
-$('#login').onclick=()=>auth(false);$('#reg').onclick=()=>auth(true);$('#pass').onkeydown=e=>e.key=='Enter'&&auth(false);
-async function start(){P=await API.me();if(!P)return;
-if(P.banned){await API.signOut();P=null;return $('#aerr').textContent='Аккаунт заблокирован администратором'}
-$('#auth').hidden=true;$('#app').hidden=false;applyTheme();head();
-if(P.is_admin&&!$('#adm'))$('#nav').insertAdjacentHTML('beforeend','<a id=adm href="admin.html">⚙️<span>Админ</span></a>');go('home')}
+let busy=false;
+async function auth(reg){
+ if(busy)return;
+ const n=$('#nick').value.trim().toLowerCase(),p=$('#pass').value,e=$('#aerr');e.textContent='';
+ if(!/^[a-z0-9_]{3,16}$/.test(n))return e.textContent='Никнейм: 3–16 символов a-z, 0-9, _';
+ if(p.length<6)return e.textContent='Пароль: минимум 6 символов';
+ busy=true;$$('#auth .btn').forEach(b=>b.disabled=true);e.textContent='Подключаюсь...';
+ try{
+  if(reg)await API.signUp(n,p);else await API.signIn(n,p);
+  await start();
+ }catch(x){e.textContent=x.message||'Ошибка входа'}
+ finally{busy=false;$$('#auth .btn').forEach(b=>b.disabled=false)}
+}
+$('#login').onclick=()=>auth(false);
+$('#reg').onclick=()=>auth(true);
+$('#pass').onkeydown=e=>{if(e.key=='Enter')auth(false)};
+$('#nick').onkeydown=e=>{if(e.key=='Enter')$('#pass').focus()};
+
+async function start(){
+ const e=$('#aerr');
+ P=await API.me();
+ if(!P){
+  $('#app').hidden=true;$('#auth').hidden=false;
+  if(await API.hasSession()){
+   await API.signOut();
+   e.textContent='Аккаунт есть, но профиль не создан. В Supabase выполни SQL из supabase.sql (раздел handle_new_user) и войди снова.';
+  }
+  return;
+ }
+ if(P.banned){await API.signOut();P=null;$('#app').hidden=true;$('#auth').hidden=false;e.textContent='Аккаунт заблокирован администратором';return}
+ e.textContent='';
+ $('#auth').hidden=true;$('#app').hidden=false;applyTheme();head();
+ if(P.is_admin&&!$('#adm'))$('#nav').insertAdjacentHTML('beforeend','<a id=adm href="admin.html">⚙️<span>Админ</span></a>');
+ go('home');
+}
 $('#mode').textContent=API.LOCAL?'Локальный прототип: данные хранятся только в этом браузере. Подключи Supabase (см. README).':'';
 start();

@@ -2,7 +2,7 @@
 (()=>{
 const C=window.VORTEX_CONFIG||{},LOCAL=!(C.SUPABASE_URL&&C.SUPABASE_ANON_KEY);
 const today=()=>new Date().toISOString().slice(0,10),em=n=>n+'@vortex-game.app';
-const tr=m=>/Invalid login/i.test(m)?'Неверный ник или пароль':/already registered/i.test(m)?'Этот ник уже занят':/not confirmed/i.test(m)?'Отключи подтверждение email в Supabase (см. README)':m;
+const tr=m=>/rate limit|too many/i.test(m)?'Слишком много попыток, подожди минуту':/Invalid login/i.test(m)?'Неверный ник или пароль':/already registered/i.test(m)?'Этот ник уже занят':/not confirmed/i.test(m)?'Отключи подтверждение email в Supabase (см. README)':m;
 const fail=e=>{throw new Error(tr(e.message||String(e)))};
 const IT=[['av_smile','avatar','Классик','🙂',0],['av_wolf','avatar','Волк','🐺',100],['av_fox','avatar','Лис','🦊',150],['av_alien','avatar','Пришелец','👾',200],['av_robot','avatar','Робот','🤖',250],['av_dragon','avatar','Дракон','🐉',300],['av_unicorn','avatar','Единорог','🦄',400],
 ['fr_none','frame','Без рамки','',0],['fr_neon','frame','Неон','f-neon',120],['fr_gold','frame','Золото','f-gold',250],['fr_fire','frame','Огонь','f-fire',400],
@@ -39,6 +39,7 @@ u[n]={id:n,nick:n,pw:hp(p),coins:100,avatar:'🙂',frame:'',badge:'',theme:'viol
 L.s('users',u);L.s('sess',n)},
 async signIn(n,p){const u=U()[n];if(!u||u.pw!==hp(p))fail({message:'Invalid login credentials'});L.s('sess',n)},
 async signOut(){localStorage.removeItem('vx_sess')},
+async hasSession(){return !!L.g('sess',null)},
 async me(){return pub(U()[L.g('sess',null)])},
 async tbl(t){return t=='items'?IT:L.g(t,t=='games'?GAMES:QS)},
 async leaders(){return Object.values(U()).map(pub)},
@@ -47,7 +48,8 @@ async rpc(n,a){try{return R[n](a)}catch(e){fail(e)}}};
 }else{
 const sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY);
 A={
-async signUp(n,p){const{error}=await sb.auth.signUp({email:em(n),password:p,options:{data:{nick:n}}});if(error)fail(error);await A.signIn(n,p)},
+async signUp(n,p){const{data,error}=await sb.auth.signUp({email:em(n),password:p,options:{data:{nick:n}}});if(error)fail(error);if(!data.session){try{await A.signIn(n,p)}catch(e){fail({message:'Аккаунт создан, но вход не выполнен. В Supabase выключи Confirm email (Authentication → Sign In / Providers → Email)'})}}},
+async hasSession(){const{data:{session}}=await sb.auth.getSession();return !!session},
 async signIn(n,p){const{error}=await sb.auth.signInWithPassword({email:em(n),password:p});if(error)fail(error)},
 signOut:()=>sb.auth.signOut(),
 async me(){const{data:{session}}=await sb.auth.getSession();if(!session)return null;const{data}=await sb.from('profiles').select('*').eq('id',session.user.id).single();return data},
