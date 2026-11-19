@@ -48,7 +48,10 @@ async rpc(n,a){try{return R[n](a)}catch(e){fail(e)}}};
 }else{
 const sb=window.supabase.createClient(C.SUPABASE_URL,C.SUPABASE_ANON_KEY);
 A={
-async signUp(n,p){const{data,error}=await sb.auth.signUp({email:em(n),password:p,options:{data:{nick:n}}});if(error)fail(error);if(!data.session){try{await A.signIn(n,p)}catch(e){fail({message:'Аккаунт создан, но вход не выполнен. В Supabase выключи Confirm email (Authentication → Sign In / Providers → Email)'})}}},
+async signUp(n,p){const{data,error}=await sb.auth.signUp({email:em(n),password:p,options:{data:{nick:n}}});if(error)fail(error);if(!data.session){try{await A.signIn(n,p)}catch(e){fail({message:'Аккаунт создан, но вход не выполнен. В Supabase выключи Confirm email (Authentication → Sign In / Providers → Email)'})}}
+  // Профиль создаём сами (не полагаясь на триггер)
+  const{error:pe}=await sb.from('profiles').upsert({id:data.user.id,nick:n},{onConflict:'id'});if(pe)fail(pe);
+},
 async hasSession(){const{data:{session}}=await sb.auth.getSession();return !!session},
 async signIn(n,p){const{error}=await sb.auth.signInWithPassword({email:em(n),password:p});if(error)fail(error)},
 signOut:()=>sb.auth.signOut(),
